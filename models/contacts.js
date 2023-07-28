@@ -44,7 +44,7 @@ const updateContact = async (id, body) => {
   const index = contacts.findIndex((item) => item.id === id);
   if (index === -1) return null;
   contacts[index] = { id, ...body };
-  updateConactsData();
+  updateConactsData(contacts);
   return contacts[index];
 };
 
