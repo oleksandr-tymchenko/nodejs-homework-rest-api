@@ -8,11 +8,9 @@ const { HttpError } = require("../../helpers");
 router.get("/", async (req, res, next) => {
   try {
     const allContacts = await contacts.listContacts();
-    // res.json(allContacts);
     res.status(200).json(allContacts);
   } catch (error) {
     next(error);
-    // res.status(500).json({ message: "Server error" });
   }
 });
 
@@ -23,28 +21,19 @@ const addSchema = Joi.object({
   phone: Joi.string().required(),
 });
 
-router.get(
-  "/:contactId",
-  async (req, res, next) => {
-    try {
-      const { contactId } = await req.params;
-      const searchedContact = await contacts.getContactById(contactId);
-      if (!searchedContact) {
-        throw HttpError(404, "Not Found");
-      }
-
-      res.status(200).json(searchedContact);
-    } catch (error) {
-      next(error);
-      // const { status = 500, message = "Server error" } = error;
-      // res.status(status).json({ message });
+router.get("/:contactId", async (req, res, next) => {
+  try {
+    const { contactId } = await req.params;
+    const searchedContact = await contacts.getContactById(contactId);
+    if (!searchedContact) {
+      throw HttpError(404, "Not Found");
     }
-  }
 
-  // if (searchedContact !== null) res.json(searchedContact);
-  // res.json({ message: "Not found" });
-  // next(createError(404));
-);
+    res.status(200).json(searchedContact);
+  } catch (error) {
+    next(error);
+  }
+});
 
 router.post("/", async (req, res, next) => {
   try {
@@ -58,8 +47,6 @@ router.post("/", async (req, res, next) => {
     res.status(201).json(newContact);
   } catch (error) {
     next(error);
-    // const { status = 500, message = "Server error" } = error;
-    // res.status(status).json({ message });
   }
 });
 
@@ -73,8 +60,6 @@ router.delete("/:contactId", async (req, res, next) => {
     res.status(200).json("contact deleted");
   } catch (error) {
     next(error);
-    // const { status = 500, message = "Server error" } = error;
-    // res.status(status).json({ message });
   }
 });
 
