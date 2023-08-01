@@ -3,24 +3,39 @@ const express = require("express");
 const {
   getAll,
   getById,
-  createById,
+  add,
   removeById,
   updateById,
+  updateFavorite,
 } = require("../../controllers/contacts");
 
-const { validateBody } = require("../../middlewares");
-const { addSchema } = require("../../schemas/contacts");
+const { validateBody, isValidId } = require("../../middlewares");
+const { schemas } = require("../../models/contact");
 
 const router = express.Router();
 
 router.get("/", getAll);
 
-router.get("/:contactId", getById);
+router.get("/:contactId", isValidId, getById);
 
-router.post("/", validateBody(addSchema), createById);
+router.post("/", validateBody(schemas.addSchema), add);
 
-router.delete("/:contactId", removeById);
+router.delete("/:contactId", isValidId, removeById);
 
-router.put("/:contactId", validateBody(addSchema), updateById);
+router.put(
+  "/:contactId",
+  isValidId,
+  validateBody(schemas.addSchema),
+  updateById
+);
+router.patch(
+  // * після id додаємо поле, яке онвлюємо
+  "/:contactId/favorite",
+  isValidId,
+  // * потрібна інша схема
+  validateBody(schemas.updateFavoriteSchema),
+  // * свій контролер порібен
+  updateFavorite
+);
 
 module.exports = router;
