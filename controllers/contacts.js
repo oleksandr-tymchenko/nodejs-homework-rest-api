@@ -18,7 +18,6 @@ const getById = async (req, res) => {
   res.status(200).json(searchedContact);
 };
 const createById = async (req, res) => {
-  // // ? перевірка чи всі дані введені
 
   const newContact = await contacts.addContact(req.body);
   res.status(201).json(newContact);
