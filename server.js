@@ -11,7 +11,7 @@ mongoose
   .connect(DB_HOST)
   .then(() =>
     // ? при успіху запуск сервер
-    // ? порт пеоенесли в змінні оточення
+    // ? порт перенесли в змінні оточення
     app.listen(PORT, () => {
       console.log("Database connection successful");
     })

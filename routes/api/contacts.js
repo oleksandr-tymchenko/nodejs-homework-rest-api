@@ -29,10 +29,10 @@ router.put(
   updateById
 );
 router.patch(
-  // * після id додаємо поле, яке онвлюємо
+  // ? після id додаємо поле, яке онвлюємо
   "/:contactId/favorite",
   isValidId,
-  // * потрібна інша схема
+  // ? потрібна інша схема
   validateBody(schemas.updateFavoriteSchema),
   // * свій контролер порібен
   updateFavorite
