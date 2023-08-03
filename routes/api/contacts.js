@@ -10,6 +10,7 @@ const {
 } = require("../../controllers/contacts");
 
 const { validateBody, isValidId } = require("../../middlewares");
+
 const { schemas } = require("../../models/contact");
 
 const router = express.Router();
@@ -28,8 +29,8 @@ router.put(
   validateBody(schemas.addSchema),
   updateById
 );
+
 router.patch(
-  // ? після id додаємо поле, яке онвлюємо
   "/:contactId/favorite",
   isValidId,
   // ? потрібна інша схема

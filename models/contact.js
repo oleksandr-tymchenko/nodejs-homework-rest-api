@@ -5,8 +5,6 @@ const { handleMongooseError } = require("../helpers");
 // ? викл ф-ю схема через new
 const contactSchema = new Schema(
   {
-    // ? перш арг - опис об'єкту який буде зберіг  в базі: назва поля і вимога
-
     name: {
       type: String,
       required: [true, "Set name for contact"],
@@ -23,7 +21,6 @@ const contactSchema = new Schema(
       default: false,
     },
   },
-  // ? 2-м аргументом передаємо об'єкт налашт для тоо
   // ? щоб замість версіі вказувало дату оновл і дату налашт
   { versionKey: false, timestamps: true }
 );
@@ -32,16 +29,12 @@ const contactSchema = new Schema(
 // * каже - якщо при збереженні сталася помилка, нехай спрац ця мідлвара
 contactSchema.post("save", handleMongooseError);
 
-// *переносимо схему joi в цей файл
-
 const addSchema = Joi.object({
   name: Joi.string().required(),
   email: Joi.string().required(),
   phone: Joi.string().required(),
   favorite: Joi.boolean(),
 });
-
-// ? створ окр схему для методу patch
 
 const updateFavoriteSchema = Joi.object({
   favorite: Joi.boolean().required(),
@@ -52,7 +45,6 @@ const schemas = {
   updateFavoriteSchema,
 };
 
-// ? створ модель
 const Contact = model("contact", contactSchema);
 
 module.exports = { Contact, schemas };
