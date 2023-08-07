@@ -9,22 +9,23 @@ const {
   updateFavorite,
 } = require("../../controllers/contacts");
 
-const { validateBody, isValidId } = require("../../middlewares");
+const { validateBody, isValidId, authenticate } = require("../../middlewares");
 
 const { schemas } = require("../../models/contact");
 
 const router = express.Router();
 
-router.get("/", getAll);
+router.get("/", authenticate, getAll);
 
-router.get("/:contactId", isValidId, getById);
+router.get("/:contactId", authenticate, isValidId, getById);
 
-router.post("/", validateBody(schemas.addSchema), add);
+router.post("/", authenticate, validateBody(schemas.addSchema), add);
 
-router.delete("/:contactId", isValidId, removeById);
+router.delete("/:contactId", authenticate, isValidId, removeById);
 
 router.put(
   "/:contactId",
+  authenticate,
   isValidId,
   validateBody(schemas.addSchema),
   updateById
@@ -32,10 +33,11 @@ router.put(
 
 router.patch(
   "/:contactId/favorite",
+  authenticate,
   isValidId,
   // ? потрібна інша схема
   validateBody(schemas.updateFavoriteSchema),
-  // * свій контролер порібен
+  // * свій контролер
   updateFavorite
 );
 

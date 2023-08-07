@@ -3,7 +3,25 @@ const { Contact } = require("../models/contact");
 const { HttpError, ctrWrapper } = require("../helpers");
 
 const getAll = async (req, res) => {
-  const allContacts = await Contact.find();
+  // ? додаємо id юзера
+  const { _id: owner } = req.user;
+
+  // ? oтр пар-ри пошуку для пагінації
+  const { page = 1, limit = 10, favorite } = req.query;
+  const skip = (page - 1) * limit;
+
+  const allContacts = await Contact.find(
+    {
+      owner,
+      // favorite
+    },
+    "-createdAt -updatedAt",
+    {
+      skip,
+      limit,
+    }
+  ).populate("owner", "name email");
+  // .exec(); // ? дозв підкл фільтрацію
   res.status(200).json(allContacts);
 };
 
@@ -17,7 +35,8 @@ const getById = async (req, res) => {
 };
 
 const add = async (req, res) => {
-  const newContact = await Contact.create(req.body);
+  const { _id: owner } = req.user;
+  const newContact = await Contact.create({ ...req.body, owner });
   res.status(201).json(newContact);
 };
 

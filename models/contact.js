@@ -20,6 +20,11 @@ const contactSchema = new Schema(
 
       default: false,
     },
+    owner: {
+      type: Schema.Types.ObjectId,
+      ref: "user",
+      requered: true,
+    },
   },
   // ? щоб замість версіі вказувало дату оновл і дату налашт
   { versionKey: false, timestamps: true }
