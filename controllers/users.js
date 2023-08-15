@@ -1,6 +1,10 @@
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const dotenv = require("dotenv");
+const gravatar = require("gravatar");
+const path = require("path");
+const fs = require("fs/promises");
+
 // ? імпортуємо клас User
 const { User } = require("../models/user");
 
@@ -8,6 +12,9 @@ const { HttpError, ctrWrapper } = require("../helpers");
 dotenv.config();
 
 const { SECRET_KEY } = process.env;
+
+// ? шлях для збереж аваатарок
+const avatarsDir = path.join(__dirname, "../", "public", "avatars");
 
 const register = async (req, res) => {
   const { email, password } = req.body;
@@ -20,8 +27,15 @@ const register = async (req, res) => {
   // ? перед створенням юзера хешємо пароль
   const hashPassword = await bcrypt.hash(password, 10);
 
+  // ? генеруємо тимч аватарку і додаємо посилання на неї далі для зберіг в базі
+  const avatarURL = gravatar.url(email);
+
   //* якщо юзера немає cтвор нового коритсувача
-  const newUser = await User.create({ ...req.body, password: hashPassword });
+  const newUser = await User.create({
+    ...req.body,
+    password: hashPassword,
+    avatarURL,
+  });
 
   res.status(201).json({
     name: newUser.name,
@@ -84,10 +98,29 @@ const updateSubscription = async (req, res) => {
   res.status(200).json(updatedSubscription);
 };
 
+const updateAvatar = async (req, res) => {
+  const { _id } = req.user;
+  const { path: tmpUpload, originalname } = req.file;
+  // * робимо назву файлу унікальною
+  const fileName = `${_id}_${originalname}`;
+  // * створ шлях де має зберіг файл + ім'я
+  const resultUpload = path.join(avatarsDir, fileName);
+  // * переміщ файл переіменовуючи
+  await fs.rename(tmpUpload, resultUpload);
+  // * запис шлях в базу
+  const avatarURL = path.join("avatars", fileName);
+  await User.findByIdAndUpdate(_id, { avatarURL });
+
+  res.json({
+    avatarURL,
+  });
+};
+
 module.exports = {
   register: ctrWrapper(register),
   login: ctrWrapper(login),
   getCurrent: ctrWrapper(getCurrent),
   logout: ctrWrapper(logout),
   updateSubscription: ctrWrapper(updateSubscription),
+  updateAvatar: ctrWrapper(updateAvatar),
 };
